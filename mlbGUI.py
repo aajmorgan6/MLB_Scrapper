@@ -1,7 +1,7 @@
-import requests
-from bs4 import BeautifulSoup
+import requests # type: ignore
+from bs4 import BeautifulSoup # type: ignore
 from tkinter import *
-from PIL import Image, ImageTk
+from PIL import Image, ImageTk # type: ignore
 
 teamNames = {'redsox': 'aleast', 'padres': 'nlwest', 'dodgers': 'nlwest',
             'braves': 'nleast' , 'bluejays': 'aleast', 'whitesox' : 'alcentral',
@@ -68,7 +68,7 @@ class Team:
                 'Hits': []
             }
             self.choice = "Hits"
-            self.statClass = 'number-GoaicxKV align-right-TwjGe_gi is-table-pinned-lGP8KWTK'
+            self.statClass = 'selected-h6IPIIxg number-GoaicxKV align-right-TwjGe_gi is-table-pinned-lGP8KWTK'
             self.scrape()
 
     def batAvg(self):
@@ -82,7 +82,7 @@ class Team:
                 'Bat Avg': []
             }
             self.choice = "Bat Avg"
-            self.statClass = 'selected-1vxxHvFg col-group-start-sa9unvY0 number-aY5arzrB align-right-3nN_D3xs is-table-pinned-1WfPW2jT'
+            self.statClass = 'selected-h6IPIIxg col-group-start-Gn6clGbi number-GoaicxKV align-right-TwjGe_gi is-table-pinned-lGP8KWTK'
             self.scrape()
 
     def homeruns(self):
@@ -96,7 +96,7 @@ class Team:
                 'Homeruns': []
             }
             self.choice = "Homeruns"
-            self.statClass = 'selected-1vxxHvFg number-aY5arzrB align-right-3nN_D3xs is-table-pinned-1WfPW2jT'
+            self.statClass = 'number-GoaicxKV align-right-TwjGe_gi is-table-pinned-lGP8KWTK'
             self.scrape()
 
     def scrape(self):
@@ -119,10 +119,12 @@ class Team:
         self.photoExist = True
 
         self.page = requests.get(self.url)
-        self.soup = BeautifulSoup(self.page.content, 'html.parser')
-        self.table = self.soup.find('div', class_ = 'table-scroller-GsCM0EhI scroller')
-        self.stat = self.table.find_all('td', class_ = self.statClass)
-        self.rows = self.table.find_all('th', class_ = 'pinned-col-3lxtuFnc col-group-start-sa9unvY0 number-aY5arzrB first-col-3aGPCzvr is-table-pinned-1WfPW2jT')
+        soup = BeautifulSoup(self.page.content, 'html.parser')
+        table = soup.find('div', class_="table-scroller-GsCM0EhI scroller")
+        # self.stat = table.find_all('td', class_ = self.statClass)
+        tbody = table.find('tbody')
+        trs = tbody.find_all("tr")
+        # self.rows = self.table.find_all('th', class_ = 'pinned-col-3lxtFnc col-group-start-sa9unvY0 number-aY5arzrB first-col-3aGPCzvr is-table-pinned-1WfPW2jT')
         self.header1 = Label(self.window, text = 'Player',
                             bg = bgColor, fg = fontColor, font = 'none 15 bold')
         self.header2 = Label(self.window, text = 'Position',
@@ -135,16 +137,16 @@ class Team:
         self.header2.place(x = 280, y = 140)
         self.header3.place(x = 380, y = 140)
 
-        for index, row in enumerate(self.rows):
-            self.name = row.find('div', class_ = 'top-wrapper-1NLTqKbE')
-            self.bothNames = self.name.find_all('span', class_ = 'full-3fV3c9pF')
-            self.position = self.name.find('div', class_='position-28TbwVOg').text
+        for index, tr in enumerate(trs):
+            name = tr.find('a', class_='bui-link').attrs['aria-label']
+            position = tr.find('div', class_='position-SAxuJGcx').text
+            stat = tr.find('td', class_=self.statClass).text
 
-            self.playerLabels.append(Label(self.window, text = self.bothNames[0].text + ' ' + self.bothNames[1].text,
+            self.playerLabels.append(Label(self.window, text=name,
                                     bg = bgColor, fg = fontColor, font = 'none 12 bold'))
-            self.posLabels.append(Label(self.window, text = self.position,
+            self.posLabels.append(Label(self.window, text=position,
                                     bg = bgColor, fg = fontColor, font = 'none 12 bold'))
-            self.statLabels.append(Label(self.window, text = self.stat[index].text,
+            self.statLabels.append(Label(self.window, text = stat,
                                     bg = bgColor, fg = fontColor, font = 'none 12 bold'))
             self.playerLabels[index].place(x = 130, y = 170 + (20 * index))
             self.posLabels[index].place(x = 300, y = 170 + (20 * index))
