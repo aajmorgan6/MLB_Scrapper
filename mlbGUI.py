@@ -2,6 +2,8 @@ import requests # type: ignore
 from bs4 import BeautifulSoup # type: ignore
 from tkinter import *
 from PIL import Image, ImageTk # type: ignore
+import sys
+import os
 
 teamNames = {'redsox': 'aleast', 'padres': 'nlwest', 'dodgers': 'nlwest',
             'braves': 'nleast' , 'bluejays': 'aleast', 'whitesox' : 'alcentral',
@@ -16,6 +18,11 @@ teamNames = {'redsox': 'aleast', 'padres': 'nlwest', 'dodgers': 'nlwest',
 
 bgColor = 'light blue'
 fontColor = 'black'
+
+def resource_path(relative_path):
+    if hasattr(sys, '_MEIPASS'):
+        return os.path.join(sys._MEIPASS, relative_path)
+    return os.path.join(os.path.abspath("."), relative_path)
 
 class Team:
 
@@ -112,7 +119,7 @@ class Team:
         if self.photoExist:
             self.photoPlace.destroy()
 
-        img = Image.open('images/' + teamNames[self.teamName] + '.jpg')
+        img = Image.open(resource_path(teamNames[self.teamName] + '.jpg'))
         img = img.resize((150, 150), Image.NEAREST)
         self.photo = ImageTk.PhotoImage(img)
         self.photoPlace = Label(self.window, image = self.photo)

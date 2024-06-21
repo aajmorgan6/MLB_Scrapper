@@ -1,1 +1,5 @@
 practice.py
+build
+dist
+.DS_Store
+.venv
